@@ -120,6 +120,13 @@ USE_L10N = True
 
 USE_TZ = True
 
+AUTH_USER_MODEL= 'core.MainUser'
+USERNAME_FIELD = 'email'
+
+JWT_AUTH = {
+    'JWT_VERIFY_EXPIRATION': False
+}
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_jwt.authentication.JSONWebTokenAuthentication',

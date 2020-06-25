@@ -1,27 +1,49 @@
 from django.db import models
+from django.contrib.auth.models import User, AbstractUser, AbstractBaseUser, PermissionsMixin, BaseUserManager
 
 
-# Create your models here.
+class MainUserManager(BaseUserManager):
+    """
+       Main user manager
+    """
 
-class UserTestManager(models.Manager):
+    def create_user(self, username, password=None, full_name=None, email=None):
+        if not username:
+            raise ValueError('User must have a username')
+        user = self.model(username=username, email=email, full_name=full_name)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
-    def get_users_by_first_name(self, string):
-        users = UserTest.objects.filter(first_name__contains=string)
-        return users
+    def create_superuser(self, username, password):
+        """
+        Creates and saves a superuser with the given email and password
+        """
+        user = self.model(username=username)
+        user.set_password(password)
+        user.is_superuser = True
+        user.is_staff = True
+        user.save(using=self._db)
+        return user
 
 
-class UserTest(models.Model):
-    first_name = models.CharField(max_length=200)
-    last_name = models.CharField(max_length=200)
+class MainUser(AbstractBaseUser, PermissionsMixin):
+    username = models.CharField(max_length=200, unique=True)
+    email = models.EmailField(max_length=300, unique=True)
+    full_name = models.CharField(max_length=200)
+    is_staff = models.BooleanField(default=False)
 
-    objects = UserTestManager()
+    USERNAME_FIELD = 'username'
 
-    def __str__(self):
-        return f"{self.first_name} {self.last_name}"
-        # return "{} {}".format(self.first_name, self.last_name)
+    objects = MainUserManager()
 
-    def get_cars(self):
-        return self.car_users.all()
+
+class Profile(models.Model):
+    # user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(MainUser, on_delete=models.CASCADE)
+    age = models.PositiveIntegerField()
+    bio = models.TextField()
+
 
 
 class Auto(models.Model):
@@ -67,7 +89,9 @@ class Bus(Auto):
 
 
 class CarUser(models.Model):
-    user = models.ForeignKey(UserTest, on_delete=models.CASCADE,
+    # user = models.ForeignKey(User, on_delete=models.CASCADE,
+    #                          related_name='car_users')
+    user = models.ForeignKey(MainUser, on_delete=models.CASCADE,
                              related_name='car_users')
     car = models.ForeignKey(Car, on_delete=models.CASCADE,
                             related_name='car_users')
