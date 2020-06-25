@@ -1,22 +1,24 @@
 from rest_framework import viewsets, mixins
 from rest_framework.decorators import action
-
+from django.contrib.auth.models import User
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from .serializers import UserTestSerializer, UserTestSerializer2, \
     CarSerializer
-from .models import UserTest, Car
+from .models import Car
+from .token import get_token
 
 
 @api_view(['POST'])
 def create_user(request):
     serializer = UserTestSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    user = UserTest.objects.create(first_name=request.data['first_name'],
-                                   last_name=request.data['last_name'])
+    user = User.objects.create(username=request.data['username'],
+                                   password=request.data['password'])
+    token = get_token(user)
     serializer2 = UserTestSerializer2(user)
-    return Response(serializer2.data)
+    return Response({'token': token, 'user': serializer2.data})
 
 
 @api_view(['GET'])

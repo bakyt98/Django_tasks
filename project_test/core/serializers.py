@@ -1,15 +1,16 @@
 from rest_framework import serializers
-from .models import UserTest, Car
+from .models import Car
+from django.contrib.auth.models import User
 
 
 class UserTestSerializer(serializers.Serializer):
-    first_name = serializers.CharField()
-    last_name = serializers.CharField()
+    username = serializers.CharField()
+    password = serializers.CharField()
 
 
 class UserTestSerializer2(serializers.ModelSerializer):
     class Meta:
-        model = UserTest
+        model = User
         fields = '__all__'
 
 
