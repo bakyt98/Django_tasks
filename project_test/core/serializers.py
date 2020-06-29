@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Car
+from .models import Car, MainUser
 from django.contrib.auth.models import User
 
 
@@ -10,7 +10,7 @@ class UserTestSerializer(serializers.Serializer):
 
 class UserTestSerializer2(serializers.ModelSerializer):
     class Meta:
-        model = User
+        model = MainUser
         fields = '__all__'
 
 

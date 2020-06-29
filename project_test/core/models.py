@@ -1,13 +1,32 @@
+"""
+File of description of classes
+"""
 from django.db import models
 from django.contrib.auth.models import User, AbstractUser, AbstractBaseUser, PermissionsMixin, BaseUserManager
 
 
 class MainUserManager(BaseUserManager):
     """
-       Main user manager
+        Main user manager
+
+        Methods
+        -------
+        create_user(self, username, password=None, full_name=None, email=None)
+            creates user with params
     """
 
     def create_user(self, username, password=None, full_name=None, email=None):
+        """
+        Creates user
+        :param username: username of user
+        :type username: str
+        :return: instance of user
+
+        Attributes
+        ----------
+        username: str
+            username of user
+        """
         if not username:
             raise ValueError('User must have a username')
         user = self.model(username=username, email=email, full_name=full_name)
@@ -28,6 +47,19 @@ class MainUserManager(BaseUserManager):
 
 
 class MainUser(AbstractBaseUser, PermissionsMixin):
+    """
+    Class describes user instance
+
+    Attributes
+    ----------
+    username: str
+        username of user
+
+    Methods
+    -------
+    name_ofmethod()
+        what it does
+    """
     username = models.CharField(max_length=200, unique=True)
     email = models.EmailField(max_length=300, unique=True)
     full_name = models.CharField(max_length=200)

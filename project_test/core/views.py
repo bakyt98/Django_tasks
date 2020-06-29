@@ -3,10 +3,12 @@ from rest_framework.decorators import action
 from django.contrib.auth.models import User
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+
 
 from .serializers import UserTestSerializer, UserTestSerializer2, \
     CarSerializer
-from .models import Car
+from .models import Car, MainUser
 from .token import get_token
 
 
@@ -14,8 +16,10 @@ from .token import get_token
 def create_user(request):
     serializer = UserTestSerializer(data=request.data)
     serializer.is_valid(raise_exception=True)
-    user = User.objects.create(username=request.data['username'],
-                                   password=request.data['password'])
+    user = MainUser.objects.create_user(username=request.data['username'],
+                                        email=request.data['email'],
+                                        full_name=request.data['full_name'],
+                                        password=request.data['password'])
     token = get_token(user)
     serializer2 = UserTestSerializer2(user)
     return Response({'token': token, 'user': serializer2.data})
@@ -31,6 +35,7 @@ def get_all_users(request):
 class CarViewSet(viewsets.ModelViewSet):
     queryset = Car.objects.all()
     serializer_class = CarSerializer
+    permission_classes = (IsAuthenticated,)
 
 
 class CarViewSet2(viewsets.ReadOnlyModelViewSet):
