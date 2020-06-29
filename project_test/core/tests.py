@@ -27,7 +27,7 @@ class MainUserApiTest(TestCase):
 class CarApiTest(TestCase):
     def setUp(self):
         self.factory = RequestFactory()
-        self.user = momy.make(MainUser)
+        self.user = mommy.make(MainUser)
         self.token = get_token(self.user)
         car = mommy.make(Car, name="BMW")
 
@@ -35,7 +35,8 @@ class CarApiTest(TestCase):
         auth_headers = {
             "HTTP_AUTHORIZATION": f"JWT {self.token}"
         }
-        request = self.factory('cars', **auth_headers)
-        response = views.CarViewSet(request)
+        request = self.factory.get('cars', **auth_headers)
+        car_list = views.CarViewSet.as_view({'get': 'list'})
+        response = car_list(request)
         self.assertEqual(len(response.data), 1)
-        self.assertEqual(response.data[0].name, "BMW")
+        self.assertEqual(response.data[0]['name'], "BMW")
