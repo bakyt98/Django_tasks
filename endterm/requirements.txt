@@ -17,7 +17,7 @@ httpie==1.0.2
 Markdown==3.1.1
 model-mommy==1.6.0
 pilkit==2.0
-Pillow==6.2.1
+Pillow==8.1.1
 prometheus-client==0.7.1
 Pygments==2.4.2
 PyJWT==1.7.1
